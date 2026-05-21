@@ -1,0 +1,93 @@
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+model user {
+  id              String   @id @default(uuid())
+  name            String
+  email           String   @unique
+  password        String
+  stripeCustomerId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  orders order[]
+}
+
+model category {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  products product[]
+}
+
+model product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  images      String[]
+  isActive    Boolean  @default(true)
+
+  categoryId String
+  category   category @relation(fields: [categoryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  orderItems orderItem[]
+}
+
+model order {
+  id                    String      @id @default(uuid())
+  total                 Float
+  status                OrderStatus @default(PENDING)
+  stripePaymentIntentId String?
+
+  userId String
+  user   user   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  items orderItem[]
+}
+
+model orderItem {
+  id        String @id @default(uuid())
+  quantity  Int    @default(1)
+  unitPrice Float
+
+  orderId   String
+  productId String
+
+  order   order   @relation(fields: [orderId], references: [id])
+  product product @relation(fields: [productId], references: [id])
+
+  @@unique([orderId, productId])
+}
