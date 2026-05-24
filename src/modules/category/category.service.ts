@@ -1,7 +1,50 @@
 import { prisma } from '../../config/prisma.js';
+import { NotFoundError } from '../../utils/errors.js';
 
-// TODO: implementar lógica de negocio para category
-// export async function findAll() { ... }
-// export async function create(data) { ... }
-// export async function update(id, data) { ... }
-// export async function remove(id) { ... }
+export class CategoryService {
+    async create(data: { name: string; description?: string }) {
+        return prisma.category.create({
+            data: {
+                name: data.name,
+                description: data.description,
+            },
+        });
+    }
+
+    async findAll() {
+        return prisma.category.findMany();
+    }
+
+    async findById(id: string) {
+        return prisma.category.findUnique({ where: { id } });
+    }
+
+    async update(id: string, data: { name?: string; description?: string }) {
+        const existing = await prisma.category.findFirst({
+            where: { id, deletedAt: null },
+        });
+
+        if (!existing) throw new NotFoundError('Category not found');
+
+        return prisma.category.update({
+            where: { id },
+            data: {
+                ...(data.name !== undefined && { name: data.name }),
+                ...(data.description !== undefined && { description: data.description }),
+            },
+        });
+    }
+
+    async remove(id: string) {
+        const existing = await prisma.category.findFirst({
+            where: { id, deletedAt: null },
+        });
+
+        if (!existing) throw new NotFoundError('Category not found');
+
+        return prisma.category.update({
+            where: { id },
+            data: { deletedAt: new Date() },
+        });
+    }
+}

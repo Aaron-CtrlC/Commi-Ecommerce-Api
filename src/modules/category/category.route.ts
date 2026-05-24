@@ -1,24 +1,15 @@
 import { Router } from 'express';
 import { auth } from '../../middleware/auth.js';
+import { CategoryController } from './category.controller.js';
+import { CategoryService } from './category.service.js';
 
 const router = Router();
+const categoryCtrl = new CategoryController(new CategoryService());
 
-// TODO: definir rutas de category
-// router.get('/', getAll);
-// router.get('/:id', getById);
-// router.post('/', auth, create);
-// router.put('/:id', auth, update);
-// router.delete('/:id', auth, remove);
-
-
-router.post('/category', auth, categoryController.create);
-
-router.get('/category/:id', categoryController.findById);
-router.get('/category', categoryController.findAll);
-
-router.put('/category/:id', auth, categoryController.update);
-
-router.delete('/category/:id',auth, categoryController.delete);
-
+router.post('/category', auth, categoryCtrl.create);
+router.get('/category', categoryCtrl.findAll);
+router.get('/category/:id', categoryCtrl.findById);
+router.put('/category/:id', auth, categoryCtrl.update);
+router.delete('/category/:id', auth, categoryCtrl.remove);
 
 export default router;
