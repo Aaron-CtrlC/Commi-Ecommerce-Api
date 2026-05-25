@@ -3,7 +3,7 @@ import type { UserService } from './user.service.js';
 
 import { asyncHandler } from '../../middleware/asyncHandler.js';
 import type { AuthRequest } from '../../middleware/auth.js';
-import { loginSchema, registerSchema } from './user.schema.js';
+import { loginSchema, registerSchema, updateProfileSchema } from './user.schema.js';
 export class UserController {
 
     private userService: UserService;
@@ -41,7 +41,7 @@ export class UserController {
 
     updateProfile = asyncHandler(async (req: AuthRequest, res: Response) => {
         const id = req.userId;
-        const data = req.body;
+        const data = updateProfileSchema.parse(req.body);
         await this.userService.update(id, data);
         const updatedUser = await this.userService.findById(id);
         res.status(200).json({ success: true, data: updatedUser, message: 'User profile updated successfully' });

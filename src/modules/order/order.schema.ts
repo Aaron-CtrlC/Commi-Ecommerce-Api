@@ -1,5 +1,19 @@
 import { z } from 'zod';
 
-// TODO: definir schemas de validación para order
-// export const createOrderSchema = z.object({ ... });
-// export const updateOrderStatusSchema = z.object({ ... });
+export const orderItemSchema = z.object({
+    productId: z.string().uuid(),
+    quantity: z.number().int().positive(),
+    unitPrice: z.number().positive(),
+});
+
+export const createOrderSchema = z.object({
+    items: z.array(orderItemSchema).min(1, 'At least one item is required'),
+});
+
+export const updateOrderStatusSchema = z.object({
+    status: z.enum(['PENDING', 'PAID', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED']),
+});
+
+export const createOrderSchema = z.object({
+    items: z.array(orderItemSchema).min(1, 'At least one item is required'),
+});
