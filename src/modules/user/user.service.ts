@@ -21,15 +21,14 @@ export class UserService {
 }
 
 async  findByEmail(email: string): Promise<any> {
-    return await prisma.user.findUnique({
-        where: { email },
+    return await prisma.user.findFirst({
+        where: { email, deletedAt: null },
     });
 }
 
 async  findById(id: string): Promise<any> {
-    // TODO: implementar lógica de búsqueda por ID
-    return await prisma.user.findUnique({
-        where: { id },
+    return await prisma.user.findFirst({
+        where: { id, deletedAt: null },
     });
 }
 
@@ -39,14 +38,17 @@ async comparePassword(user: any, password: string): Promise<boolean> {
 
 
 async  update(id: string, data: any) {
-    const hashedPassword = await bcrypt.hash(data.password, 10); // TODO: hashear la contraseña antes de actualizarla
+    const existing = await prisma.user.findFirst({ where: { id, deletedAt: null } });
+    if (!existing) throw new NotFoundError('User not found');
+
+    const updateData: any = {};
+    if (data.name) updateData.name = data.name;
+    if (data.email) updateData.email = data.email;
+    if (data.password) updateData.password = await bcrypt.hash(data.password, 10);
+
     return await prisma.user.update({
         where: { id },
-        data: {
-            name: data.name,
-            email: data.email,
-            password: hashedPassword, // TODO: hashear la contraseña antes de actualizarla
-        },
+        data: updateData,
     });
 }
 

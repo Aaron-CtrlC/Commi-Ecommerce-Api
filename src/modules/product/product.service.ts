@@ -24,7 +24,7 @@ export class ProductService {
     }
 
     async findAll(filters) {
-        const where = {};
+        const where = { deletedAt: null };
         if (filters.name) {
             where['name'] = { contains: filters.name, mode: 'insensitive' };
         }
@@ -44,8 +44,8 @@ export class ProductService {
     }
 
     async getById(id) {
-        return await prisma.product.findUnique({
-            where: { id },
+        return await prisma.product.findFirst({
+            where: { id, deletedAt: null },
         });
     }
 

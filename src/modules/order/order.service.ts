@@ -1,11 +1,7 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
 
-// TODO: implementar lógica de negocio para order
-// export async function create(data) { ... }
-// export async function findByUser(userId) { ... }
-// export async function findAll() { ... }
-// export async function updateStatus(id, status) { ... }
+
 
 
 export class OrderService {
@@ -34,26 +30,38 @@ export class OrderService {
     })
     }
 
-    async findByUser(userId) {
+    async findByUser(userId: string) {
         return await prisma.order.findMany({
-            where: { userId },
+            where: { userId, deletedAt: null },
             include: { items: true },
         });
     }
 
     async findAll() {
         return await prisma.order.findMany({
+            where: { deletedAt: null },
             include: { items: true },
         });
     }
 
-    async updateStatus(id, status) {
+    async updateStatus(id: string, status: 'PENDING' | 'PAID' | 'CANCELLED') {
         const existing = await prisma.order.findFirst({ where: { id, deletedAt: null } });
         if (!existing) throw new NotFoundError('Order not found');
 
         return prisma.order.update({
             where: { id },
             data: { status },
+        });
+    }
+
+
+    async updatePaymentIntentId (id: string, paymentIntentId: string) {
+        const existing = await prisma.order.findFirst({ where: { id, deletedAt: null } });
+        if (!existing) throw new NotFoundError('Order not found');
+
+        return prisma.order.update({
+            where: { id },
+            data: { stripePaymentIntentId: paymentIntentId },
         });
     }
 

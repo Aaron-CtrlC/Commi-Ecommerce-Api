@@ -6,8 +6,11 @@ import categoryRoutes from './modules/category/category.route.js';
 import userRoutes from './modules/user/user.route.js';
 import productRoutes from './modules/product/product.route.js';
 import orderRoutes from './modules/order/order.route.js';
+import paymentRoutes from './modules/payment/payment.route.js';
 
 const app = express();
+
+app.use(paymentRoutes);
 app.use(express.json());
 
 app.use(categoryRoutes);

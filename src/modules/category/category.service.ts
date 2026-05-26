@@ -12,11 +12,15 @@ export class CategoryService {
     }
 
     async findAll() {
-        return prisma.category.findMany();
+        return prisma.category.findMany({
+            where: { deletedAt: null },
+        });
     }
 
     async findById(id: string) {
-        return prisma.category.findUnique({ where: { id } });
+        return prisma.category.findFirst({
+            where: { id, deletedAt: null },
+        });
     }
 
     async update(id: string, data: { name?: string; description?: string }) {

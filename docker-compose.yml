@@ -22,7 +22,9 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://admin:password123@db:5432/commi_ecommerce
-      JWT_SECRET: tu-secreto-jwt-cambiame
+      JWT_SECRET: h9vDnxh5jl9VWadhO0Oy4k1IKZngR7ebX6v8X5bmcFc
+      STRIPE_SECRET_KEY: rk_test_51TZT7rJFslHyfjt1fBNZzJt6ftXIXtiGLPeNS0QTQqZogS0MrynnqFIrOj2bZ9utxJdwZIQOGdNTgdFW7QrTtbIi00puQzzWmw
+      STRIPE_WEBHOOK_SECRET: rk_test_51TZT7rJFslHyfjt1EKf2BFil9ciMDFWxoY0Uz2LLXdvRYwQLDhYyrZzAn2hp7XVSYOR2nMJMvJD8CUzQtTy1lnPW000FjNEFJb,
       PORT: 3000
     depends_on:
       db:
