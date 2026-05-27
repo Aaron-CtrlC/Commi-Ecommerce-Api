@@ -1,6 +1,6 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
-import { updateProductSchema } from './product.schema';
+import { updateProductSchema, createProductSchema } from './product.schema';
 
 // TODO: implementar lógica de negocio para product
 // export async function findAll(filters) { ... }
@@ -11,7 +11,7 @@ import { updateProductSchema } from './product.schema';
 
 
 export class ProductService {
-    async create(data) {
+    async create(data: createProductSchema) {
         return await prisma.product.create({
             data: {
                 name: data.name,
@@ -24,7 +24,7 @@ export class ProductService {
         });
     }
 
-    async findAll(filters) {
+    async findAll(filters: any) {
         const where = { deletedAt: null };
         if (filters.name) {
             where['name'] = { contains: filters.name, mode: 'insensitive' };

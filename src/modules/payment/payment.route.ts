@@ -1,10 +1,8 @@
-import { Router, raw } from 'express';
-import { PaymentController } from './payment.controller.js';
-import { PaymentService } from './payment.service.js';
+import { Router } from 'express';
 
 const router = Router();
-const paymentCtrl = new PaymentController(new PaymentService());
 
-router.post('/webhook', raw({ type: 'application/json' }), paymentCtrl.handleWebhookEvent);
+// Webhook route is mounted directly in app.ts before express.json()
+// Add future payment routes here (they'll use JSON parser from app)
 
 export default router;

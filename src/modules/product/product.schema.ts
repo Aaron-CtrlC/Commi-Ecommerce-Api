@@ -14,10 +14,10 @@ export const createProductSchema = z.object({
 });
 
 export const updateProductSchema = z.object({
-    name: z.string().min(1, 'Name is required').optional(),
+    name: z.string().min(1).optional(),
     description: z.string().optional(),
-    price: z.number().positive('Price must be a positive number').optional(),
-    stock: z.number().int().nonnegative('Stock must be a non-negative integer').optional(),
+    price: z.number().positive().optional(),
+    stock: z.number().int().nonnegative().optional(),
     categoryId: z.string().optional(),
 });
 
