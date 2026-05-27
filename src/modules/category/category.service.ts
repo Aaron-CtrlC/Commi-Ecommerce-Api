@@ -1,5 +1,6 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
+import { updateCategorySchema } from './category.schema.js';
 
 export class CategoryService {
     async create(data: { name: string; description?: string }) {
@@ -23,7 +24,7 @@ export class CategoryService {
         });
     }
 
-    async update(id: string, data: { name?: string; description?: string }) {
+    async update(id: string, data: updateCategorySchema) {
         const existing = await prisma.category.findFirst({
             where: { id, deletedAt: null },
         });
@@ -32,10 +33,7 @@ export class CategoryService {
 
         return prisma.category.update({
             where: { id },
-            data: {
-                ...(data.name !== undefined && { name: data.name }),
-                ...(data.description !== undefined && { description: data.description }),
-            },
+            data,
         });
     }
 

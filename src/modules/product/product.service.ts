@@ -1,5 +1,6 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
+import { updateProductSchema } from './product.schema';
 
 // TODO: implementar lógica de negocio para product
 // export async function findAll(filters) { ... }
@@ -49,19 +50,14 @@ export class ProductService {
         });
     }
 
-    async update(id, data) {
+    async update(id:string, data:updateProductSchema) {
         const existing = await prisma.product.findFirst({ where: { id, deletedAt: null } });
         if (!existing) throw new NotFoundError('Product not found');
 
         return prisma.product.update({
             where: { id },
             data: {
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                stock: data.stock,
-                images: data.images,
-                categoryId: data.categoryId,
+                ...data
             },
         });
     }
@@ -72,6 +68,7 @@ export class ProductService {
 
         return prisma.product.update({
             where: { id },
+            data: { deletedAt: new Date() },
         });
     }
 

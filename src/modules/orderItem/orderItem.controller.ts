@@ -1,20 +1,19 @@
 import type { Request, Response } from 'express';
 import { OrderItemService } from './orderItem.service.js';
 import { asyncHandler } from '../../middleware/asyncHandler.js';
-
-// TODO: implementar handlers para orderItem si es necesario
+import { createOrderItemSchema, updateOrderItemSchema } from './orderItem.schema.js';
 
 class OrderItemController {
     constructor(private orderItemService: OrderItemService) { }
 
     create = asyncHandler(async (req: Request, res: Response) => {
-        const data = req.body;
+        const data = createOrderItemSchema.parse(req.body);
         const orderItem = await this.orderItemService.create(data);
         res.status(201).json({ success: true, data: orderItem });
     });
 
     findAll = asyncHandler(async (req: Request, res: Response) => {
-        const filters = req.query;
+        const filters = req.query as { orderId?: string; productId?: string };
         const orderItems = await this.orderItemService.findAll(filters);
         res.json({ success: true, data: orderItems });
     });
@@ -26,7 +25,7 @@ class OrderItemController {
     });
 
     update = asyncHandler(async (req: Request, res: Response) => {
-        const data = req.body;
+        const data = updateOrderItemSchema.parse(req.body);
         const orderItem = await this.orderItemService.update(req.params.id, data);
         res.json({ success: true, data: orderItem });
     });

@@ -1,5 +1,15 @@
 import { z } from 'zod';
 
-// TODO: definir schema de validación para orderItem
-// (generalmente se valida inline dentro de la orden)
-// export const orderItemSchema = z.object({ ... });
+export const createOrderItemSchema = z.object({
+    orderId: z.string().uuid(),
+    productId: z.string().uuid(),
+    quantity: z.number().int().positive(),
+    unitPrice: z.number().positive(),
+});
+
+export const updateOrderItemSchema = z.object({
+    orderId: z.string().uuid().optional(),
+    productId: z.string().uuid().optional(),
+    quantity: z.number().int().positive().optional(),
+    unitPrice: z.number().positive().optional(),
+});
