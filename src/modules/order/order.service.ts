@@ -1,5 +1,6 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
+import { OrderStatus } from '../../generated/client/client.js';
 
 
 
@@ -7,14 +8,15 @@ import { NotFoundError } from '../../utils/errors.js';
 export class OrderService {
 
 
-    async create(data) {
+    async create(data: { items: { productId: string; quantity: number; unitPrice: number }[] }, userId: string) {
         const total = data.items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0);
         return prisma.$transaction(async (tx)=>{
             const order = await tx.order.create({
                 data: {
-                    userId: data.userId,
+                    userId,
                     total,
-                    status: 'PENDING',                },
+                    status: 'PENDING',
+                },
         });
 
         await tx.orderItem.createMany({
@@ -44,7 +46,7 @@ export class OrderService {
         });
     }
 
-    async updateStatus(id: string, status: 'PENDING' | 'PAID' | 'CANCELLED') {
+    async updateStatus(id: string, status: OrderStatus) {
         const existing = await prisma.order.findFirst({ where: { id, deletedAt: null } });
         if (!existing) throw new NotFoundError('Order not found');
 

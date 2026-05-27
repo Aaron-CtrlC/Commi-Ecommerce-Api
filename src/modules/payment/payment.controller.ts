@@ -7,8 +7,17 @@ export class PaymentController {
 
     handleWebhookEvent = asyncHandler(async (req: Request, res: Response) => {
         const sig = req.headers['stripe-signature'] as string;
+        if (!sig) {
+            res.status(400).json({ success: false, error: 'Missing stripe-signature header' });
+            return;
+        }
 
-        await this.paymentService.processWebhook(req.body, sig);
+        try {
+            await this.paymentService.processWebhook(req.body, sig);
+        } catch {
+            res.status(400).json({ success: false, error: 'Invalid signature' });
+            return;
+        }
 
         res.json({ received: true });
     });

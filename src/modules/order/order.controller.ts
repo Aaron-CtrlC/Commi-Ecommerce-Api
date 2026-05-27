@@ -12,8 +12,8 @@ export class OrderController {
     ) { }
 
     create = asyncHandler(async (req: AuthRequest, res: Response) => {
-        const data = createOrderSchema.parse({ ...req.body, userId: req.userId });
-        const order = await this.orderService.create(data);
+        const data = createOrderSchema.parse(req.body);
+        const order = await this.orderService.create(data, req.userId!);
         const { clientSecret, paymentIntentId } = await this.paymentService.createPayment(order.id, order.total);
         await this.orderService.updatePaymentIntentId(order.id, paymentIntentId);
         res.status(201).json({ success: true, data: {...order, clientSecret} });

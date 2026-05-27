@@ -11,26 +11,26 @@ export class CategoryController {
     create = asyncHandler(async (req: AuthRequest, res: Response) => {
         const data = createCategorySchema.parse(req.body);
         const category = await this.categoryService.create(data);
-        res.status(201).json(category);
+        res.status(201).json({ success: true, data: category });
     });
 
     findAll = asyncHandler(async (req: Request, res: Response) => {
         const categories = await this.categoryService.findAll();
-        res.json(categories);
+        res.json({ success: true, data: categories });
     });
 
     findById = asyncHandler(async (req: Request, res: Response) => {
         const id = req.params.id;
         const category = await this.categoryService.findById(id);
         if (!category) throw new NotFoundError('Category not found');
-        res.json(category);
+        res.json({ success: true, data: category });
     });
 
     update = asyncHandler(async (req: AuthRequest, res: Response) => {
         const id = req.params.id;
         const data = updateCategorySchema.parse(req.body);
         const category = await this.categoryService.update(id, data);
-        res.json(category);
+        res.json({ success: true, data: category });
     });
 
     remove = asyncHandler(async (req: AuthRequest, res: Response) => {
