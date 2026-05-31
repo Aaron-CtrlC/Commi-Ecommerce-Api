@@ -6,30 +6,29 @@ import { updateProfileSchema } from './user.schema.js';
 export class UserService {
     
     async  create(data) {
-    // TODO: implementar lógica de creación de usuario
     const hashedPassword = await bcrypt.hash(data.password, 10);
     return await prisma.user.create({
         data: {
             name: data.name,
             email: data.email,
-            password: hashedPassword, // TODO: hashear la contraseña antes de guardarla
+            password: hashedPassword, 
         },
     });
 }
 
-async  findByEmail(email: string): Promise<any> {
+async findByEmail(email: string) {
     return await prisma.user.findFirst({
         where: { email, deletedAt: null },
     });
 }
 
-async  findById(id: string): Promise<any> {
+async findById(id: string) {
     return await prisma.user.findFirst({
         where: { id, deletedAt: null },
     });
 }
 
-async comparePassword(user: any, password: string): Promise<boolean> {
+async comparePassword(user: any, password: string) {
     return await bcrypt.compare(password, user.password);
 }
 

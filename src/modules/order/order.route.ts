@@ -11,7 +11,8 @@ const orderCtrl = new OrderController(new OrderService(), new PaymentService(), 
 // Order routes
 router.post('/order', auth, orderCtrl.create);
 router.get('/order/me', auth, orderCtrl.getMyOrders);
-router.get('/order', auth, orderCtrl.getAll);
+router.get('/order/:id', auth, orderCtrl.getById);
+
 router.patch('/order/:id/status', auth, orderCtrl.updateStatus);
 
 // OrderItem sub-routes (anidadas bajo /order/:orderId/items)

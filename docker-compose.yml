@@ -3,15 +3,15 @@ services:
     image: postgres:15
     restart: always
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: password123
-      POSTGRES_DB: commi_ecommerce
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d commi_ecommerce"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,14 +21,15 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://admin:password123@db:5432/commi_ecommerce
-      JWT_SECRET: h9vDnxh5jl9VWadhO0Oy4k1IKZngR7ebX6v8X5bmcFc
-      STRIPE_SECRET_KEY: rk_test_51TZT7rJFslHyfjt1fBNZzJt6ftXIXtiGLPeNS0QTQqZogS0MrynnqFIrOj2bZ9utxJdwZIQOGdNTgdFW7QrTtbIi00puQzzWmw
-      STRIPE_WEBHOOK_SECRET: rk_test_51TZT7rJFslHyfjt1EKf2BFil9ciMDFWxoY0Uz2LLXdvRYwQLDhYyrZzAn2hp7XVSYOR2nMJMvJD8CUzQtTy1lnPW000FjNEFJb,
-      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET: ${JWT_SECRET}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      PORT: ${PORT}
     depends_on:
       db:
         condition: service_healthy
 
 volumes:
   postgres_data:
+

@@ -1,68 +1,31 @@
 import { prisma } from '../../config/prisma.js';
 import { NotFoundError } from '../../utils/errors.js';
-import { updateProductSchema, createProductSchema } from './product.schema';
-
-// TODO: implementar lógica de negocio para product
-// export async function findAll(filters) { ... }
-// export async function getById(id) { ... }
-// export async function create(data) { ... }
-// export async function update(id, data) { ... }
-// export async function remove(id) { ... }
-
+import type { updateProductSchema, createProductSchema } from './product.schema';
 
 export class ProductService {
     async create(data: createProductSchema) {
-        return await prisma.product.create({
-            data: {
-                name: data.name,
-                description: data.description,
-                price: data.price,
-                stock: data.stock,
-                images: data.images,
-                categoryId: data.categoryId,
-            },
-        });
+        return await prisma.product.create({ data });
     }
 
-    async findAll(filters: any) {
-        const where = { deletedAt: null };
-        if (filters.name) {
-            where['name'] = { contains: filters.name, mode: 'insensitive' };
-        }
-        if (filters.minPrice) {
-            where['price'] = { gte: filters.minPrice };
-        }
-        if (filters.maxPrice) {
-            where['price'] = { lte: filters.maxPrice };
-        }
-        if (filters.categoryId) {
-            where['categoryId'] = filters.categoryId;
-        }
-        if (filters.inStock === true) {
-            where['stock'] = { gt: 0 };
-        }
+    async findAll(filters: Record<string, unknown>) {
+        const where: Record<string, unknown> = { deletedAt: null };
         return await prisma.product.findMany({ where });
     }
 
-    async getById(id) {
+    async getById(id: string) {
         return await prisma.product.findFirst({
             where: { id, deletedAt: null },
         });
     }
 
-    async update(id:string, data:updateProductSchema) {
+    async update(id: string, data: updateProductSchema) {
         const existing = await prisma.product.findFirst({ where: { id, deletedAt: null } });
         if (!existing) throw new NotFoundError('Product not found');
 
-        return prisma.product.update({
-            where: { id },
-            data: {
-                ...data
-            },
-        });
+        return prisma.product.update({ where: { id }, data });
     }
 
-    async remove(id) {
+    async remove(id: string) {
         const existing = await prisma.product.findFirst({ where: { id, deletedAt: null } });
         if (!existing) throw new NotFoundError('Product not found');
 
@@ -71,6 +34,4 @@ export class ProductService {
             data: { deletedAt: new Date() },
         });
     }
-
-
 }
